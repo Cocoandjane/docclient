@@ -35,6 +35,8 @@ export default function Document() {
   //   }
   // }
 
+
+
   const { connection } = DocHubSignalR("http://localhost:7101/r/doc");
 
   const InvokeSendDoc = (doc) => {
@@ -58,7 +60,7 @@ export default function Document() {
   }, [connection]);
 
   useEffect(() => {
-    if (connection && document.id ) {
+    if (connection ) {
       connection.start()
         .then(() => {
           joinDoc(document.id);
@@ -77,7 +79,7 @@ export default function Document() {
         connection.off("ReceiveDoc", receiveDocHandler);
       };
     }
-  }, [connection, setDocument, document.id, joinDoc]);
+  }, [connection, setDocument, joinDoc]);
 
 
   return (
