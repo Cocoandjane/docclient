@@ -63,7 +63,7 @@ export default function Document() {
     if (connection ) {
       connection.start()
         .then(() => {
-          joinDoc(document.id);
+          joinDoc(documentId);
         })
         .catch((err) => {
           console.log(err);
@@ -79,7 +79,7 @@ export default function Document() {
         connection.off("ReceiveDoc", receiveDocHandler);
       };
     }
-  }, [connection, setDocument, joinDoc]);
+  }, [connection, setDocument, documentId, joinDoc]);
 
 
   return (
