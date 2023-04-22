@@ -1,8 +1,10 @@
 import 'react-quill/dist/quill.snow.css'
 import dynamic from 'next/dynamic'
 import axios from 'axios'
+import { useState } from 'react'
 // import DocHubSignalR from "./DocHubSignalR"
 import { useEffect, useCallback } from 'react'
+import { cookies } from 'next/dist/client/components/headers'
 
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
   ssr: false,
@@ -59,12 +61,13 @@ const formats = [
 export default function Home({ document, setDocument, onSendInvoke, joinDoc }) {
 
   const handleChange = (value) => {
-    setDocument({ ...document, body: value })
-    if (typeof onSendInvoke === 'function') {
-    onSendInvoke({ ...document, body: value })
+    setDocument({ ...document, body: value });
+    if (typeof onSendInvoke === 'function' ) {
+      onSendInvoke({ ...document, body: value });
     }
-  }
-
+  };
+  const [newDocCreated, setNewDocCreated] = useState(false);
+  
   function UpdateDocument() {
     if (document.id) {
       axios.put(`${process.env.NEXT_PUBLIC_API_URL}/document/${document.id}`, document).then((res) => {
@@ -76,17 +79,22 @@ export default function Home({ document, setDocument, onSendInvoke, joinDoc }) {
       }
     } else {
       if(document.title.length > 1 || document.body.length > 1){
-        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/document`, document).then((res) => {
-          console.log(res.data)
-          setDocument({ ...document, id: res.data.id })
-        }).catch((err) => {
-          console.log(err)
-        })
+        if (!newDocCreated) {
+          axios.post(`${process.env.NEXT_PUBLIC_API_URL}/document`, document)
+            .then((res) => {
+              console.log(res.data);
+              setDocument({ ...document, id: res.data.id });
+              setNewDocCreated(true);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       }
     }
   }
 
-  console.log(document)
+
   return (
 
     <>
